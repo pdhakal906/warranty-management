@@ -33,7 +33,7 @@ export default function RootLayout({
           <Box style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Header />
             <Box style={{ display: 'flex', flex: 1 }}>
-              <Box style={{ width: '150px', borderRight: '1px solid #eee' }}>
+              <Box style={{ width: '120px', borderRight: '1px solid #eee' }}>
                 <Sidebar />
               </Box>
               <Box style={{ flex: 1, padding: '20px' }}>

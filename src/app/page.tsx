@@ -1,4 +1,5 @@
 // import { getProducts } from "@/lib/data/getProduct";
+import HomeComponent from "@/components/HomeComponent";
 import { Text } from "@mantine/core";
 
 export default async function Home() {
@@ -8,7 +9,8 @@ export default async function Home() {
   // const products = result.data?.products
   return (
     <div>
-      <Text>Welcome to the Warranty Management System</Text>
+      <Text>Welcome to the RMA Management System</Text>
+      <HomeComponent></HomeComponent>
     </div>
   );
 }
