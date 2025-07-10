@@ -1,23 +1,22 @@
 import { db } from "@/lib/db";
 
-interface GetProductsInput {
-  skip?: number;
-  limit?: number;
+interface GetProductByIdInput {
+  id: string;
 }
 
 interface GetProductsResponse {
   success: boolean;
-  data?: {
-    products: Awaited<ReturnType<typeof db.product.findMany>>;
-    total: number;
-  };
+  // data?: {
+  //   products: Awaited<ReturnType<typeof db.product.findMany>>;
+  //   total: number;
+  // };
+  data?: Awaited<ReturnType<typeof db.product.findUnique>>;
   error?: string;
 }
 
-export async function getProducts({
-  skip = 0,
-  limit = 10,
-}: GetProductsInput = {}): Promise<GetProductsResponse> {
+export async function getProductTempById({
+  id: string,
+}: GetProductByIdInput): Promise<GetProductsResponse> {
   try {
     // Get total count of products
     const total = await db.product.count();
@@ -29,20 +28,12 @@ export async function getProducts({
       orderBy: {
         createdAt: "desc",
       },
-      include: {
-        serialNumbers: true, // Include related serial numbers
-      },
     });
-
-    const productsWithSerials = products.map((product) => ({
-      ...product,
-      serialNumbers: product.serialNumbers.map((sn) => sn.number),
-    }));
 
     return {
       success: true,
       data: {
-        products: productsWithSerials,
+        products,
         total,
       },
     };

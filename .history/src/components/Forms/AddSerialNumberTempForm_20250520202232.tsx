@@ -1,38 +1,42 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Button, Stack, TextInput } from '@mantine/core';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { notifications } from '@mantine/notifications';
+import { useState } from 'react';
 
 interface FormValues {
-  name: string;
+  number: string;
 }
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Product name is required')
+  number: Yup.string().required('Serial number is required').min(16, "Serial number must be 16 characters long ").max(16, "Serial number must be 16 characters long "),
 });
 
-interface AddProductFormProps {
+interface AddSerialNumberTempFormProps {
+  productTempId: string;
   onSuccess?: () => void;
   onClose?: () => void;
 }
 
-export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) => {
-  const router = useRouter();
+export const AddSerialNumberTempForm = ({ onSuccess, onClose, productTempId }: AddSerialNumberTempFormProps) => {
+  const [submitAction, setSubmitAction] = useState<'next' | 'save'>('next');
 
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
-      const response = await fetch('/api/productTemp', {
+      const response = await fetch('/api/serialNumberTemp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          productTempId
+        }),
       });
 
       const data = await response.json();
@@ -40,20 +44,16 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
       if (response.ok) {
         notifications.show({
           title: 'Success',
-          message: 'Product added successfully',
+          message: 'Serial number added successfully',
           color: 'green',
         });
         resetForm();
         onSuccess?.();
         onClose?.();
-        console.log(data.id)
-        router.push(`/addProduct/${data.id}?productName=${values.name}`);
-
-
       } else {
         notifications.show({
           title: 'Error',
-          message: data.error || 'Failed to add product',
+          message: data.error || 'Failed to add serial number',
           color: 'red',
         });
       }
@@ -71,7 +71,7 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
   return (
     <Formik
       initialValues={{
-        name: '',
+        number: '',
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -79,25 +79,33 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
       {({ errors, touched, isSubmitting }) => (
         <Form>
           <Stack gap="md">
-
             <Field
-              name="name"
+              name="number"
               as={TextInput}
-              label="Product Name"
-              placeholder="Enter product name"
-              error={touched.name && errors.name}
+              label="Serial Number"
+              placeholder="Enter serial number"
+              error={touched.number && errors.number}
             />
 
             <Button
               type="submit"
               loading={isSubmitting}
+              onClick={() => setSubmitAction('next')}
               fullWidth
             >
-              Add Product
+              Next
+            </Button>
+            <Button
+              type="submit"
+              loading={isSubmitting}
+              onClick={() => setSubmitAction('save')}
+              fullWidth
+            >
+              Save
             </Button>
           </Stack>
         </Form>
       )}
     </Formik>
   );
-};
+}; 

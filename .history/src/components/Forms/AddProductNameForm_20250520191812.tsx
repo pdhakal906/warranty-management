@@ -47,7 +47,7 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
         onSuccess?.();
         onClose?.();
         console.log(data.id)
-        router.push(`/addProduct/${data.id}?productName=${values.name}`);
+        router.push(`/addProduct/${data.id}`);
 
 
       } else {

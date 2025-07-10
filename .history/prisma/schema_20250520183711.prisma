@@ -15,39 +15,29 @@ datasource db {
 }
 
 model Product {
-  id            String         @id @default(uuid())
-  name          String
-  description   String?
-  // serialNumber  String         @unique @db.VarChar(16) 
-  serialNumbers SerialNumber[] // Keep this
-  sale          Sale?          @relation(fields: [saleId], references: [id])
-  saleId        String? // nullable if not sold yet
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id           String         @id @default(uuid())
+  name         String
+  description  String?
+  serialNumber String         @unique @db.VarChar(16)
+  sale         Sale?          @relation(fields: [saleId], references: [id])
+  saleId       String? // nullable if not sold yet
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  SerialNumber SerialNumber[]
 }
 
 model SerialNumber {
   id        String   @id @default(uuid())
   number    String   @unique @db.VarChar(16)
   product   Product? @relation(fields: [productId], references: [id])
-  productId String
+  productId String? // nullable if not sold yet
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model ProductTemp {
-  id                String             @id @default(uuid())
-  name              String
-  SerialNumberTemps SerialNumberTemp[] // Keep this
-}
-
-model SerialNumberTemp {
-  id            String       @id @default(uuid())
-  number        String       @unique @db.VarChar(16)
-  productTemp   ProductTemp? @relation(fields: [productTempId], references: [id])
-  productTempId String
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id   String @id @default(uuid())
+  name String
 }
 
 model Customer {

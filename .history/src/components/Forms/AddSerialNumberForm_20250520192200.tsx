@@ -1,33 +1,30 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { Button, Stack, TextInput } from '@mantine/core';
+import { Button, Stack, TextInput, Textarea } from '@mantine/core';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { notifications } from '@mantine/notifications';
 
 interface FormValues {
-  name: string;
+  number: string;
 }
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Product name is required')
+  number: Yup.number().required('Serial number is required').min(16, "Serial number must be 16 characters long ").max(16, "Serial number must be 16 characters long "),
 });
 
-interface AddProductFormProps {
+interface AddCustomerFormProps {
   onSuccess?: () => void;
   onClose?: () => void;
 }
 
-export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) => {
-  const router = useRouter();
-
+export const AddCustomerForm = ({ onSuccess, onClose }: AddCustomerFormProps) => {
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
-      const response = await fetch('/api/productTemp', {
+      const response = await fetch('/api/customers', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,20 +37,16 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
       if (response.ok) {
         notifications.show({
           title: 'Success',
-          message: 'Product added successfully',
+          message: 'Customer added successfully',
           color: 'green',
         });
         resetForm();
         onSuccess?.();
         onClose?.();
-        console.log(data.id)
-        router.push(`/addProduct/${data.id}?productName=${values.name}`);
-
-
       } else {
         notifications.show({
           title: 'Error',
-          message: data.error || 'Failed to add product',
+          message: data.error || 'Failed to add customer',
           color: 'red',
         });
       }
@@ -72,6 +65,7 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
     <Formik
       initialValues={{
         name: '',
+        description: '',
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -79,13 +73,20 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
       {({ errors, touched, isSubmitting }) => (
         <Form>
           <Stack gap="md">
-
             <Field
               name="name"
               as={TextInput}
-              label="Product Name"
-              placeholder="Enter product name"
+              label="Customer Name"
+              placeholder="Enter customer name"
               error={touched.name && errors.name}
+            />
+
+            <Field
+              name="description"
+              as={Textarea}
+              label="Description"
+              placeholder="Enter customer description (optional)"
+              error={touched.description && errors.description}
             />
 
             <Button
@@ -93,11 +94,11 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
               loading={isSubmitting}
               fullWidth
             >
-              Add Product
+              Add Customer
             </Button>
           </Stack>
         </Form>
       )}
     </Formik>
   );
-};
+}; 

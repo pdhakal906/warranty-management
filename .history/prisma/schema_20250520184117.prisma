@@ -18,7 +18,7 @@ model Product {
   id            String         @id @default(uuid())
   name          String
   description   String?
-  // serialNumber  String         @unique @db.VarChar(16) 
+  serialNumber  String         @unique @db.VarChar(16)
   serialNumbers SerialNumber[] // Keep this
   sale          Sale?          @relation(fields: [saleId], references: [id])
   saleId        String? // nullable if not sold yet
@@ -36,18 +36,8 @@ model SerialNumber {
 }
 
 model ProductTemp {
-  id                String             @id @default(uuid())
-  name              String
-  SerialNumberTemps SerialNumberTemp[] // Keep this
-}
-
-model SerialNumberTemp {
-  id            String       @id @default(uuid())
-  number        String       @unique @db.VarChar(16)
-  productTemp   ProductTemp? @relation(fields: [productTempId], references: [id])
-  productTempId String
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id   String @id @default(uuid())
+  name String
 }
 
 model Customer {

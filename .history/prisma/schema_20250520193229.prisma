@@ -18,7 +18,7 @@ model Product {
   id            String         @id @default(uuid())
   name          String
   description   String?
-  // serialNumber  String         @unique @db.VarChar(16) 
+  serialNumber  String         @unique @db.VarChar(16)
   serialNumbers SerialNumber[] // Keep this
   sale          Sale?          @relation(fields: [saleId], references: [id])
   saleId        String? // nullable if not sold yet

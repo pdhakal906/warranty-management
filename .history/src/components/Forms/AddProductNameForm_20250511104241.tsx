@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Button, Stack, TextInput } from '@mantine/core';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
@@ -20,8 +19,6 @@ interface AddProductFormProps {
 }
 
 export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) => {
-  const router = useRouter();
-
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, resetForm }: FormikHelpers<FormValues>
@@ -46,10 +43,6 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
         resetForm();
         onSuccess?.();
         onClose?.();
-        console.log(data.id)
-        router.push(`/addProduct/${data.id}?productName=${values.name}`);
-
-
       } else {
         notifications.show({
           title: 'Error',

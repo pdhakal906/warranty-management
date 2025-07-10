@@ -1,33 +1,31 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Button, Stack, TextInput } from '@mantine/core';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { notifications } from '@mantine/notifications';
 
 interface FormValues {
-  name: string;
+  number: string;
 }
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Product name is required')
+  number: Yup.number().required('Serial number is required').min(16, "Serial number must be 16 characters long ").max(16, "Serial number must be 16 characters long "),
 });
 
-interface AddProductFormProps {
+interface AddSerialNumberTempFormProps {
+  productTempId: string;
   onSuccess?: () => void;
   onClose?: () => void;
 }
 
-export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) => {
-  const router = useRouter();
-
+export const AddSerialNumberTempForm = ({ onSuccess, onClose, productTempId }: AddSerialNumberTempFormProps) => {
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
-      const response = await fetch('/api/productTemp', {
+      const response = await fetch('/api/serialNumberTemp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,20 +38,16 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
       if (response.ok) {
         notifications.show({
           title: 'Success',
-          message: 'Product added successfully',
+          message: 'Serial number added successfully',
           color: 'green',
         });
         resetForm();
         onSuccess?.();
         onClose?.();
-        console.log(data.id)
-        router.push(`/addProduct/${data.id}?productName=${values.name}`);
-
-
       } else {
         notifications.show({
           title: 'Error',
-          message: data.error || 'Failed to add product',
+          message: data.error || 'Failed to add serial number',
           color: 'red',
         });
       }
@@ -71,7 +65,7 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
   return (
     <Formik
       initialValues={{
-        name: '',
+        number: '',
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -79,13 +73,12 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
       {({ errors, touched, isSubmitting }) => (
         <Form>
           <Stack gap="md">
-
             <Field
               name="name"
               as={TextInput}
-              label="Product Name"
-              placeholder="Enter product name"
-              error={touched.name && errors.name}
+              label="Serial Number"
+              placeholder="Enter serial number"
+              error={touched.number && errors.number}
             />
 
             <Button
@@ -93,11 +86,18 @@ export const AddProductNameForm = ({ onSuccess, onClose }: AddProductFormProps) 
               loading={isSubmitting}
               fullWidth
             >
-              Add Product
+              Next
+            </Button>
+            <Button
+              type="submit"
+              loading={isSubmitting}
+              fullWidth
+            >
+              Save
             </Button>
           </Stack>
         </Form>
       )}
     </Formik>
   );
-};
+}; 

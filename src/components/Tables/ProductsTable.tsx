@@ -9,6 +9,7 @@ interface Product {
   id: string;
   name: string;
   serialNumber: string;
+  serialNumbers: string[];
   createdAt: string;
   updatedAt: string;
   description?: string;
@@ -86,31 +87,78 @@ const ProductsTable = () => {
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Name</Table.Th>
-            <Table.Th>Serial Number</Table.Th>
+            <Table.Th>Serial Numbers</Table.Th>
             <Table.Th>Description</Table.Th>
             <Table.Th>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {products.map((product: Product) => (
-            <Table.Tr key={product.id}>
-              <Table.Td>{product.name}</Table.Td>
-              <Table.Td>{product.serialNumber}</Table.Td>
-              <Table.Td>{product.description}</Table.Td>
-              <Table.Td>
-                <Group>
-                  <Button variant="outline" size="xs" onClick={() => handleEdit(product)}>
-                    Edit
-                  </Button>
-                  <Button variant="outline" color="red" size="xs" onClick={() => handleDelete(product.id)}>
-                    Delete
-                  </Button>
-                </Group>
-              </Table.Td>
-            </Table.Tr>
-          ))}
+          {products.map((product: Product) => {
+            const serials = product.serialNumbers || [];
+            return (
+              <React.Fragment key={product.id}>
+                {serials.length > 0 ? (
+                  serials.map((sn, index) => (
+                    <Table.Tr key={`${product.id}-${index}`}>
+                      <Table.Td>{index === 0 ? product.name : null}</Table.Td>
+                      <Table.Td>{sn}</Table.Td>
+                      <Table.Td>{index === 0 ? product.description : null}</Table.Td>
+                      <Table.Td>
+                        {index === 0 && (
+                          <Group>
+                            <Button
+                              variant="outline"
+                              size="xs"
+                              onClick={() => handleEdit(product)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              color="red"
+                              size="xs"
+                              onClick={() => handleDelete(product.id)}
+                            >
+                              Delete
+                            </Button>
+                          </Group>
+                        )}
+                      </Table.Td>
+                    </Table.Tr>
+                  ))
+                ) : (
+                  // Case when there are no serial numbers
+                  <Table.Tr key={product.id}>
+                    <Table.Td>{product.name}</Table.Td>
+                    <Table.Td>-</Table.Td>
+                    <Table.Td>{product.description}</Table.Td>
+                    <Table.Td>
+                      <Group>
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          onClick={() => handleEdit(product)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          color="red"
+                          size="xs"
+                          onClick={() => handleDelete(product.id)}
+                        >
+                          Delete
+                        </Button>
+                      </Group>
+                    </Table.Td>
+                  </Table.Tr>
+                )}
+              </React.Fragment>
+            );
+          })}
         </Table.Tbody>
       </Table>
+
 
       <CustomDrawer
         opened={isEditFormOpen}
